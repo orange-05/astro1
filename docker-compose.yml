@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  astrology-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: acharya_shastri_astrology
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    volumes:
+      # Persist inquiries and configuration across container restarts
+      - ./data:/app/data
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
