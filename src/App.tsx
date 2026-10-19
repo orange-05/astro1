@@ -6,6 +6,7 @@ import { CelestialCanvas } from './components/CelestialCanvas';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { IntroSection } from './components/IntroSection';
+import { SacredDarshana } from './components/SacredDarshana';
 import { ServicesSection } from './components/ServicesSection';
 import { ConsultationProcess } from './components/ConsultationProcess';
 import { TrustAndEthics } from './components/TrustAndEthics';
@@ -63,6 +64,37 @@ export default function App() {
   const [chatbotOpen, setChatbotOpen] = useState(false);
   const [adminOpen, setAdminOpen] = useState(false);
   const [seoModalOpen, setSeoModalOpen] = useState(false);
+
+  // Dark / Light (Bright) theme state with persistence
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('acharya_theme') as 'dark' | 'light';
+      if (saved === 'light' || saved === 'dark') {
+        return saved;
+      }
+    }
+    return 'dark';
+  });
+
+  // Apply theme class to document element for immediate CSS & Tailwind adaptation
+  useEffect(() => {
+    if (theme === 'light') {
+      document.documentElement.classList.add('light');
+      document.documentElement.classList.remove('dark');
+      document.documentElement.setAttribute('data-theme', 'light');
+    } else {
+      document.documentElement.classList.remove('light');
+      document.documentElement.classList.add('dark');
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+    try {
+      localStorage.setItem('acharya_theme', theme);
+    } catch {}
+  }, [theme]);
+
+  const handleToggleTheme = () => {
+    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
+  };
 
   // Dynamic Astrologer Configuration
   const [config, setConfig] = useState<AstrologerConfig>(() => {
@@ -235,11 +267,11 @@ export default function App() {
   };
 
   return (
-    <div className="relative min-h-screen bg-[#070b19] text-slate-100 selection:bg-amber-500/30 selection:text-amber-200">
+    <div className="relative min-h-screen bg-[#070b19] text-slate-100 selection:bg-amber-500/30 selection:text-amber-200 transition-colors duration-300">
       {/* Subtle celestial canvas backdrop */}
-      <CelestialCanvas />
+      <CelestialCanvas theme={theme} />
 
-      {/* Top Navigation Bar */}
+      {/* Top Navigation Bar with Dark / Light Mode Toggle */}
       <Navbar
         currentLang={currentLang}
         onSelectLang={handleSelectLang}
@@ -248,6 +280,8 @@ export default function App() {
         onNavigate={handleNavigate}
         whatsappNumber={config.whatsappNumber}
         onOpenChatbot={() => setChatbotOpen(true)}
+        theme={theme}
+        onToggleTheme={handleToggleTheme}
       />
 
       {/* Main Two-Page Routing with Mobile Safe Area Padding */}
@@ -267,6 +301,13 @@ export default function App() {
             <IntroSection
               t={t}
               onNavigateAbout={() => handleNavigate('about')}
+            />
+
+            {/* Sacred Lineage Darshana: Maa Durga & Lord Munishvara */}
+            <SacredDarshana
+              theme={theme}
+              whatsappNumber={config.whatsappNumber}
+              currentLangName={currentLangMeta.name}
             />
 
             {/* Specialized Astrological Services Overview */}

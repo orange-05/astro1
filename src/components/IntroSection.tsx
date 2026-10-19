@@ -9,7 +9,7 @@ interface IntroSectionProps {
 
 export const IntroSection: React.FC<IntroSectionProps> = ({ t, onNavigateAbout }) => {
   return (
-    <section className="py-16 sm:py-20 border-t border-amber-500/15 relative">
+    <section id="intro" className="py-16 sm:py-20 border-t border-amber-500/15 relative surface-secondary transition-colors duration-300">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8">
         {/* Subtle unboxed kicker */}
         <div className="inline-flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-amber-400/80">

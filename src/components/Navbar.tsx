@@ -3,6 +3,7 @@ import { Globe, Menu, X, MessageSquare, Phone } from 'lucide-react';
 import { SupportedLanguage } from '../types';
 import { SUPPORTED_LANGUAGES, getLanguageMeta } from '../i18n/languages';
 import { TranslationSchema } from '../i18n/translations';
+import { ThemeToggle } from './ThemeToggle';
 
 interface NavbarProps {
   currentLang: SupportedLanguage;
@@ -12,6 +13,8 @@ interface NavbarProps {
   onNavigate: (page: 'home' | 'about', anchor?: string) => void;
   whatsappNumber: string;
   onOpenChatbot: () => void;
+  theme: 'dark' | 'light';
+  onToggleTheme: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -21,7 +24,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   currentPage,
   onNavigate,
   whatsappNumber,
-  onOpenChatbot
+  onOpenChatbot,
+  theme,
+  onToggleTheme
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
@@ -35,8 +40,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   const cleanWaNumber = whatsappNumber.replace(/[^0-9]/g, '');
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-amber-500/15 bg-[#070b19]/90 backdrop-blur-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-8">
+    <header className="sticky top-0 z-40 w-full border-b border-amber-500/15 bg-[#070b19]/90 backdrop-blur-md transition-colors duration-300">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4 sm:gap-8">
         {/* Zone 1: Brand Wordmark (Single text element in luxury serif) */}
         <button
           onClick={() => handleLinkClick('home')}
@@ -51,7 +56,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </span>
         </button>
 
-        {/* Zone 2: 4-5 Concise Single-Line Navigation Links */}
+        {/* Zone 2: Concise Single-Line Navigation Links */}
         <nav className="hidden lg:flex items-center gap-7 text-sm font-medium text-slate-300">
           <button
             onClick={() => handleLinkClick('home')}
@@ -100,8 +105,11 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
         </nav>
 
-        {/* Zone 3: Language Selector & Primary Consultation CTA */}
-        <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+        {/* Zone 3: Dark/Light Mode Toggle + Language Selector + Primary Consultation CTA */}
+        <div className="flex items-center gap-2 sm:gap-3.5 shrink-0">
+          {/* Day / Night Theme Toggle */}
+          <ThemeToggle theme={theme} onToggle={onToggleTheme} />
+
           {/* Language Selector Dropdown */}
           <div className="relative">
             <button
@@ -111,7 +119,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               aria-expanded={langDropdownOpen}
             >
               <Globe className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-              <span className="font-medium max-w-[90px] sm:max-w-none truncate">{currentLangMeta.nativeName}</span>
+              <span className="font-medium max-w-[80px] sm:max-w-none truncate">{currentLangMeta.nativeName}</span>
               <span className="text-[10px] text-amber-400/70 uppercase">({currentLangMeta.code})</span>
             </button>
 
@@ -180,7 +188,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Mobile Menu Toggle Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg text-amber-300 hover:bg-slate-800/80 transition-colors cursor-pointer"
+            className="lg:hidden min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg text-amber-400 hover:bg-amber-500/10 transition-colors cursor-pointer"
             aria-label="Toggle navigation menu"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -191,6 +199,11 @@ export const Navbar: React.FC<NavbarProps> = ({
       {/* Mobile Responsive Navigation Drawer */}
       {mobileMenuOpen && (
         <div className="lg:hidden border-t border-amber-500/20 bg-[#070b19] px-4 pt-3 pb-8 space-y-4 max-h-[85vh] overflow-y-auto">
+          {/* Quick Theme Switcher in Mobile Drawer */}
+          <div className="pt-1">
+            <ThemeToggle theme={theme} onToggle={onToggleTheme} variant="full" />
+          </div>
+
           <div className="flex flex-col space-y-1 pt-1">
             <button
               onClick={() => handleLinkClick('home')}
