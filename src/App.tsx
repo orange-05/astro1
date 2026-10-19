@@ -80,6 +80,18 @@ export default function App() {
 
   // Fetch initial config from backend API with localStorage fallback for static hosting
   useEffect(() => {
+    // Clean up stale query params like ?page=docs without reloading
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const pageParam = urlParams.get('page');
+      if (pageParam && pageParam !== 'about') {
+        urlParams.delete('page');
+        const cleanQuery = urlParams.toString() ? `?${urlParams.toString()}` : '';
+        const cleanUrl = window.location.pathname + cleanQuery + window.location.hash;
+        window.history.replaceState({}, '', cleanUrl);
+      }
+    }
+
     fetch('/api/config')
       .then(res => {
         if (!res.ok) throw new Error('Static host');

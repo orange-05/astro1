@@ -5,22 +5,36 @@
     <title>Acharya Shastri — Vedic Astrology</title>
     <script type="text/javascript">
       // GitHub Pages SPA redirect: preserves path, query parameters, and hashes
-      var pathSegmentsToKeep = 1; // For project pages (e.g., /astro1/)
-      var l = window.location;
-      var segments = l.pathname.split('/').filter(Boolean);
-      var repoBase = segments.length > 0 ? '/' + segments[0] : '';
-      var subPath = segments.slice(pathSegmentsToKeep).join('/');
-      
-      var searchParams = new URLSearchParams(l.search);
-      if (subPath) {
-        searchParams.set('page', subPath);
-      }
-      
-      var target = repoBase + '/?' + searchParams.toString() + l.hash;
-      window.location.replace(target);
+      (function() {
+        var l = window.location;
+        var segments = l.pathname.split('/').filter(Boolean);
+        var repoBase = segments.length > 0 ? '/' + segments[0] : '';
+        var subPath = segments.slice(1).join('/');
+
+        // Check if already on the root to avoid redirect loops
+        if (!subPath || subPath === 'docs' || subPath === 'dist' || subPath === 'index.html') {
+          if (l.search.includes('page=docs') || l.search.includes('page=dist')) {
+            window.location.replace(repoBase + '/');
+            return;
+          }
+          window.location.replace(repoBase + '/');
+          return;
+        }
+
+        // SPA subroute (e.g. /about)
+        if (subPath === 'about') {
+          window.location.replace(repoBase + '/?page=about' + (l.hash || ''));
+          return;
+        }
+
+        // Default: redirect cleanly to homepage
+        window.location.replace(repoBase + '/');
+      })();
     </script>
   </head>
-  <body style="background-color: #070b19; color: #fef08a; font-family: sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0;">
-    <p>Loading Acharya Shastri Sanctum...</p>
+  <body style="background-color: #070b19; color: #fef08a; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; text-align: center;">
+    <h2 style="font-family: serif; color: #d4af37; margin-bottom: 8px;">Acharya Shastri Jyotish</h2>
+    <p style="color: #cbd5e1; margin-bottom: 16px;">Loading celestial sanctum...</p>
+    <a href="./" style="color: #d4af37; border: 1px solid #d4af37; padding: 8px 16px; border-radius: 4px; text-decoration: none; font-size: 14px;">Return to Sanctuary</a>
   </body>
 </html>
