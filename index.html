@@ -24,6 +24,18 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+      // Suppress harmless Vite dev WebSocket reconnect notices in sandbox preview
+      window.addEventListener('unhandledrejection', function(event) {
+        if (event && event.reason && (
+          (event.reason.message && (event.reason.message.includes('WebSocket') || event.reason.message.includes('vite'))) ||
+          String(event.reason).includes('WebSocket')
+        )) {
+          event.preventDefault();
+        }
+      });
+    </script>
   </head>
   <body class="bg-[#070b19] text-[#e2e8f0] antialiased selection:bg-[#d4af37]/30 selection:text-[#fef08a] min-h-screen">
     <div id="root"></div>

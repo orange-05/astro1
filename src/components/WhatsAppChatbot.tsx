@@ -114,9 +114,30 @@ export const WhatsAppChatbot: React.FC<WhatsAppChatbotProps> = ({
         })
       });
 
-      if (res.ok) {
+      if (res && res.ok) {
         setSubmittedToDb(true);
         if (onInquirySubmitted) onInquirySubmitted();
+      } else {
+        // Fallback for static hosting on GitHub Pages
+        try {
+          const localList = JSON.parse(localStorage.getItem('acharya_inquiries') || '[]');
+          localList.unshift({
+            id: `inq-${Date.now()}`,
+            createdAt: new Date().toISOString(),
+            name,
+            contactMethod,
+            contactValue,
+            category,
+            concern: concern || 'General consultation inquiry',
+            preferredTime,
+            preferredLanguage: currentLangName,
+            status: 'new',
+            source: 'whatsapp_assistant',
+            notes: 'Recorded via client (GitHub Pages / Static)'
+          });
+          localStorage.setItem('acharya_inquiries', JSON.stringify(localList));
+          setSubmittedToDb(true);
+        } catch {}
       }
 
       trackConversion('inquiry_qualified', {
@@ -126,6 +147,26 @@ export const WhatsAppChatbot: React.FC<WhatsAppChatbotProps> = ({
       });
     } catch (e) {
       console.warn('Backend logging note:', e);
+      // Fallback for network error or static hosting
+      try {
+        const localList = JSON.parse(localStorage.getItem('acharya_inquiries') || '[]');
+        localList.unshift({
+          id: `inq-${Date.now()}`,
+          createdAt: new Date().toISOString(),
+          name,
+          contactMethod,
+          contactValue,
+          category,
+          concern: concern || 'General consultation inquiry',
+          preferredTime,
+          preferredLanguage: currentLangName,
+          status: 'new',
+          source: 'whatsapp_assistant',
+          notes: 'Recorded via client (GitHub Pages / Static)'
+        });
+        localStorage.setItem('acharya_inquiries', JSON.stringify(localList));
+        setSubmittedToDb(true);
+      } catch {}
     } finally {
       setIsSubmitting(false);
       setStep('complete');

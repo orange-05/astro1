@@ -45,9 +45,13 @@ export const AdminDrawer: React.FC<AdminDrawerProps> = ({
       if (res.ok) {
         const data = await res.json();
         setInquiries(data.inquiries || []);
+      } else {
+        const local = JSON.parse(localStorage.getItem('acharya_inquiries') || '[]');
+        setInquiries(local);
       }
-    } catch (err) {
-      console.error('Error fetching inquiries:', err);
+    } catch {
+      const local = JSON.parse(localStorage.getItem('acharya_inquiries') || '[]');
+      setInquiries(local);
     } finally {
       setLoading(false);
     }

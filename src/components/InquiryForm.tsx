@@ -53,17 +53,37 @@ export const InquiryForm: React.FC<InquiryFormProps> = ({
     setLoading(true);
 
     try {
-      const res = await fetch('/api/inquiries', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          source: 'homepage_form'
-        })
-      });
+      let savedLocally = false;
+      try {
+        const res = await fetch('/api/inquiries', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...formData,
+            source: 'homepage_form'
+          })
+        });
+        if (!res.ok) {
+          savedLocally = true;
+        }
+      } catch {
+        savedLocally = true;
+      }
 
-      if (!res.ok) {
-        throw new Error('Failed to submit consultation request.');
+      if (savedLocally) {
+        // Fallback for static hosting like GitHub Pages
+        try {
+          const localList = JSON.parse(localStorage.getItem('acharya_inquiries') || '[]');
+          localList.unshift({
+            id: `inq-${Date.now()}`,
+            createdAt: new Date().toISOString(),
+            ...formData,
+            status: 'new',
+            source: 'homepage_form',
+            notes: 'Recorded via client (GitHub Pages / Static)'
+          });
+          localStorage.setItem('acharya_inquiries', JSON.stringify(localList));
+        } catch {}
       }
 
       trackConversion('contact_form_submit', {

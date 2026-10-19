@@ -47,10 +47,14 @@ export default function App() {
     return DEFAULT_LANGUAGE;
   });
 
-  // Page 1 vs Page 2 navigation state
+  // Page 1 vs Page 2 navigation state - supports root paths, subdirectories (/astro1/), and query params (?page=about)
   const [currentPage, setCurrentPage] = useState<'home' | 'about'>(() => {
-    if (typeof window !== 'undefined' && window.location.pathname === '/about') {
-      return 'about';
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('page') === 'about') return 'about';
+      if (window.location.pathname.endsWith('/about') || window.location.hash === '#about') {
+        return 'about';
+      }
     }
     return 'home';
   });
@@ -61,18 +65,32 @@ export default function App() {
   const [seoModalOpen, setSeoModalOpen] = useState(false);
 
   // Dynamic Astrologer Configuration
-  const [config, setConfig] = useState<AstrologerConfig>(DEFAULT_CONFIG);
+  const [config, setConfig] = useState<AstrologerConfig>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('acharya_config');
+        if (saved) return JSON.parse(saved);
+      } catch {}
+    }
+    return DEFAULT_CONFIG;
+  });
 
   const t = getTranslation(currentLang);
   const currentLangMeta = getLanguageMeta(currentLang);
 
-  // Fetch initial config from backend API
+  // Fetch initial config from backend API with localStorage fallback for static hosting
   useEffect(() => {
     fetch('/api/config')
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error('Static host');
+        return res.json();
+      })
       .then(data => {
         if (data && data.whatsappNumber) {
           setConfig(prev => ({ ...prev, ...data }));
+          try {
+            localStorage.setItem('acharya_config', JSON.stringify(data));
+          } catch {}
         }
       })
       .catch(() => {});
@@ -160,11 +178,36 @@ export default function App() {
     }
 
     if (typeof window !== 'undefined') {
-      const path = page === 'about' ? '/about' : '/';
-      const search = currentLang !== 'en' ? `?lang=${currentLang}` : '';
-      window.history.pushState({}, '', `${path}${search}`);
+      const url = new URL(window.location.href);
+      if (page === 'about') {
+        url.searchParams.set('page', 'about');
+      } else {
+        url.searchParams.delete('page');
+      }
+      if (currentLang !== 'en') {
+        url.searchParams.set('lang', currentLang);
+      }
+      window.history.pushState({}, '', url.toString());
     }
   };
+
+  // Support browser back/forward buttons on GitHub Pages & custom domains
+  useEffect(() => {
+    const handlePopState = () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('page') === 'about' || window.location.pathname.endsWith('/about') || window.location.hash === '#about') {
+        setCurrentPage('about');
+      } else {
+        setCurrentPage('home');
+      }
+      const paramLang = urlParams.get('lang') as SupportedLanguage;
+      if (paramLang && ['en', 'kn', 'ta', 'te', 'ml', 'hi', 'mr', 'jam', 'yor', 'ig', 'ha', 'tt'].includes(paramLang)) {
+        setCurrentLang(paramLang);
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   const handleScrollToForm = () => {
     if (currentPage !== 'home') {
