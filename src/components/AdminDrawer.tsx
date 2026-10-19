@@ -401,7 +401,7 @@ export const AdminDrawer: React.FC<AdminDrawerProps> = ({
                       type="text"
                       value={waNumberInput}
                       onChange={e => setWaNumberInput(e.target.value)}
-                      placeholder="+919876543210"
+                      placeholder="+919739488901"
                       className="w-full px-3 py-2 rounded-lg bg-slate-900 border border-amber-500/20 text-slate-100 focus:outline-none focus:border-amber-400"
                     />
                   </div>
@@ -414,7 +414,7 @@ export const AdminDrawer: React.FC<AdminDrawerProps> = ({
                       type="text"
                       value={displayPhoneInput}
                       onChange={e => setDisplayPhoneInput(e.target.value)}
-                      placeholder="+91 98765 43210"
+                      placeholder="+91 97394 88901"
                       className="w-full px-3 py-2 rounded-lg bg-slate-900 border border-amber-500/20 text-slate-100 focus:outline-none focus:border-amber-400"
                     />
                   </div>

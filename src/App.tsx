@@ -21,8 +21,8 @@ import { MobileBottomBar } from './components/MobileBottomBar';
 const DEFAULT_CONFIG: AstrologerConfig = {
   astrologerName: 'Acharya Keshava Shastri',
   lineage: '24+ Years Traditional Vedic Lineage (Varanasi & Udupi Traditions)',
-  whatsappNumber: '+919876543210',
-  displayPhone: '+91 98765 43210',
+  whatsappNumber: '+919739488901',
+  displayPhone: '+91 97394 88901',
   email: 'acharya.shastri.jyotish@gmail.com',
   consultationHours: 'Monday – Saturday: 08:30 AM – 07:30 PM IST',
   consultationModes: ['In-Person (Bengaluru / Varanasi)', 'Direct WhatsApp Video/Voice', 'Detailed Written Kundali Report'],

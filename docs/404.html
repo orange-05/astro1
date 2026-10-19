@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Acharya Shastri — Vedic Astrology</title>
+    <script type="text/javascript">
+      // GitHub Pages SPA redirect: preserves path, query parameters, and hashes
+      var pathSegmentsToKeep = 1; // For project pages (e.g., /astro1/)
+      var l = window.location;
+      var segments = l.pathname.split('/').filter(Boolean);
+      var repoBase = segments.length > 0 ? '/' + segments[0] : '';
+      var subPath = segments.slice(pathSegmentsToKeep).join('/');
+      
+      var searchParams = new URLSearchParams(l.search);
+      if (subPath) {
+        searchParams.set('page', subPath);
+      }
+      
+      var target = repoBase + '/?' + searchParams.toString() + l.hash;
+      window.location.replace(target);
+    </script>
+  </head>
+  <body style="background-color: #070b19; color: #fef08a; font-family: sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0;">
+    <p>Loading Acharya Shastri Sanctum...</p>
+  </body>
+</html>
